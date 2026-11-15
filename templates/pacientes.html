@@ -27,26 +27,32 @@
                 <p>Consulte e organize os pacientes da sua microárea.</p>
             </div>
 
-            <button type="button" class="primary-button">
+            <a href="{{ url_for('pacientes') }}#formulario" class="primary-button">
                 + Novo paciente
-            </button>
+            </a>
         </div>
+
+        {% if mensagem %}
+            <p role="status">{{ mensagem }}</p>
+        {% endif %}
 
         <section class="content-card">
 
             <h3>Consultar pacientes</h3>
 
-            <div class="search-area">
+            <form class="search-area" method="GET" action="{{ url_for('pacientes') }}">
                 <input
                     type="search"
+                    name="busca"
                     placeholder="Digite o nome do paciente..."
                     aria-label="Pesquisar paciente pelo nome"
+                    value="{{ busca }}"
                 >
 
-                <button type="button" class="primary-button">
+                <button type="submit" class="primary-button">
                     Pesquisar
                 </button>
-            </div>
+            </form>
 
             <div class="table-container">
                 <table>
@@ -61,85 +67,117 @@
                     </thead>
 
                     <tbody>
+                        {% for paciente in pacientes %}
                         <tr>
-                            <td>Maria Oliveira</td>
-                            <td>10/05/1970</td>
-                            <td>(24) 99999-0000</td>
-                            <td>Rua das Flores, 100</td>
+                            <td>{{ paciente.nome }}</td>
+                            <td>{{ paciente.data_nascimento | data_br }}</td>
+                            <td>{{ paciente.telefone or "-" }}</td>
+                            <td>{{ paciente.endereco }}</td>
                             <td>
-                                <button type="button" class="edit-button">
+                                <a
+                                    href="{{ url_for('pacientes', editar=paciente.id_paciente) }}#formulario"
+                                    class="edit-button"
+                                >
                                     Editar
-                                </button>
+                                </a>
                             </td>
                         </tr>
-
+                        {% else %}
                         <tr>
-                            <td>João Santos</td>
-                            <td>22/08/1965</td>
-                            <td>(24) 98888-0000</td>
-                            <td>Rua do Sol, 45</td>
-                            <td>
-                                <button type="button" class="edit-button">
-                                    Editar
-                                </button>
-                            </td>
+                            <td colspan="5">Nenhum paciente encontrado.</td>
                         </tr>
-
-                        <tr>
-                            <td>Ana Costa</td>
-                            <td>15/03/1982</td>
-                            <td>(24) 97777-0000</td>
-                            <td>Rua das Acácias, 20</td>
-                            <td>
-                                <button type="button" class="edit-button">
-                                    Editar
-                                </button>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
 
         </section>
 
-        <section class="content-card">
+        <section class="content-card" id="formulario">
 
-            <h3>Cadastrar paciente</h3>
+            <h3>
+                {% if paciente_edicao %}
+                    Editar paciente
+                {% else %}
+                    Cadastrar paciente
+                {% endif %}
+            </h3>
 
-            <form class="patient-form">
+            <form class="patient-form" method="POST" action="{{ url_for('pacientes') }}">
+
+                <input
+                    type="hidden"
+                    name="id_paciente"
+                    value="{{ paciente_edicao.id_paciente if paciente_edicao else '' }}"
+                >
 
                 <div class="form-group">
                     <label for="nome">Nome completo *</label>
-                    <input type="text" id="nome" placeholder="Digite o nome completo" required>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="Digite o nome completo"
+                        value="{{ paciente_edicao.nome if paciente_edicao else '' }}"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="nascimento">Data de nascimento</label>
-                    <input type="date" id="nascimento">
+                    <input
+                        type="date"
+                        id="nascimento"
+                        name="nascimento"
+                        value="{{ paciente_edicao.data_nascimento if paciente_edicao else '' }}"
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="endereco">Endereço *</label>
-                    <input type="text" id="endereco" placeholder="Digite o endereço" required>
+                    <input
+                        type="text"
+                        id="endereco"
+                        name="endereco"
+                        placeholder="Digite o endereço"
+                        value="{{ paciente_edicao.endereco if paciente_edicao else '' }}"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="telefone">Telefone</label>
-                    <input type="tel" id="telefone" placeholder="(00) 00000-0000">
+                    <input
+                        type="tel"
+                        id="telefone"
+                        name="telefone"
+                        placeholder="(00) 00000-0000"
+                        value="{{ paciente_edicao.telefone if paciente_edicao else '' }}"
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="cadastro">Número de cadastro</label>
-                    <input type="text" id="cadastro" placeholder="Número de cadastro">
+                    <input
+                        type="text"
+                        id="cadastro"
+                        name="cadastro"
+                        placeholder="Número de cadastro"
+                        value="{{ paciente_edicao.numero_cadastro if paciente_edicao else '' }}"
+                    >
                 </div>
 
                 <div class="form-actions">
-                    <button type="reset" class="secondary-button">
+                    <a href="{{ url_for('pacientes') }}#formulario" class="secondary-button">
                         Limpar
-                    </button>
+                    </a>
 
-                    <button type="button" class="primary-button">
-                        Salvar paciente
+                    <button type="submit" class="primary-button">
+                        {% if paciente_edicao %}
+                            Atualizar paciente
+                        {% else %}
+                            Salvar paciente
+                        {% endif %}
                     </button>
                 </div>
 
