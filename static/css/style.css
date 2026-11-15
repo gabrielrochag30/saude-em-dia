@@ -499,3 +499,31 @@ td {
         align-self: flex-start;
     }
 }
+
+/* ACESSIBILIDADE - AMPLIAÇÃO DA INTERFACE */
+
+/* ACESSIBILIDADE - AUMENTO DOS TEXTOS */
+
+body.fonte-ampliada {
+    font-size: 120%;
+}
+
+body.fonte-ampliada h1,
+body.fonte-ampliada h2,
+body.fonte-ampliada h3,
+body.fonte-ampliada p,
+body.fonte-ampliada label,
+body.fonte-ampliada span,
+body.fonte-ampliada a,
+body.fonte-ampliada button,
+body.fonte-ampliada input,
+body.fonte-ampliada select,
+body.fonte-ampliada textarea,
+body.fonte-ampliada th,
+body.fonte-ampliada td {
+    font-size: 1.2em;
+}
+
+#botao-acessibilidade {
+    font-weight: bold;
+}

@@ -19,6 +19,16 @@
     <div class="topbar-actions">
         <span class="user-name">Agente de Saúde</span>
 
+        <!-- Botão de acessibilidade -->
+        <button
+            type="button"
+            id="botao-acessibilidade"
+            class="secondary-button"
+            aria-pressed="false"
+        >
+            A+ Aumentar fonte
+        </button>
+
         <form method="GET" action="{{ url_for('visitas') }}">
             <button type="submit" class="secondary-button">
                 Visitas
@@ -203,5 +213,6 @@
 
     </main>
 
+    <script src="{{ url_for('static', filename='js/acessibilidade.js') }}"></script>
 </body>
 </html>

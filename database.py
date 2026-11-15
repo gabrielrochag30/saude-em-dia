@@ -17,8 +17,9 @@ def get_connection():
 def initialize_db():
     """Cria as tabelas necessárias para o sistema."""
 
-    with get_connection() as connection:
+    connection = get_connection()
 
+    try:
         connection.executescript("""
             CREATE TABLE IF NOT EXISTS usuarios (
                 id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +57,9 @@ def initialize_db():
             CREATE INDEX IF NOT EXISTS idx_visitas_paciente_data
             ON visitas (id_paciente, data_visita);
         """)
+
+    finally:
+        connection.close()
 
 
 if __name__ == "__main__":

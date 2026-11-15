@@ -96,6 +96,7 @@ def inicio():
             connection.close()
 
         if usuario and check_password_hash(usuario["senha_hash"], senha):
+            session.clear()
             session["id_usuario"] = usuario["id_usuario"]
             session["login"] = usuario["login"]
 
