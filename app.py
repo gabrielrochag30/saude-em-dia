@@ -175,9 +175,154 @@ def pacientes():
     )
 
 
-@app.route("/visitas")
+
+def carregar_dados_visitas():
+    connection = get_connection()
+
+    try:
+        pacientes = connection.execute(
+            """
+            SELECT id_paciente, nome
+            FROM pacientes
+            WHERE ativo = 1
+            ORDER BY nome
+            """
+        ).fetchall()
+
+        visitas = connection.execute(
+            """
+            SELECT
+                visitas.id_visita,
+                pacientes.nome AS nome_paciente,
+                visitas.data_visita,
+                visitas.status,
+                visitas.observacoes
+            FROM visitas
+            INNER JOIN pacientes
+                ON pacientes.id_paciente = visitas.id_paciente
+            ORDER BY visitas.data_visita DESC, visitas.id_visita DESC
+            """
+        ).fetchall()
+
+        ultima_visita = connection.execute(
+            """
+            SELECT data_visita
+            FROM visitas
+            WHERE status = 'concluida'
+            ORDER BY data_visita DESC, id_visita DESC
+            LIMIT 1
+            """
+        ).fetchone()
+
+        return pacientes, visitas, ultima_visita
+
+    finally:
+        connection.close()
+
+
+@app.route("/visitas", methods=["GET", "POST"])
 def visitas():
-    return render_template("visitas.html")
+    mensagem = request.args.get("mensagem", "")
+
+    if request.method == "POST":
+        id_paciente = request.form.get("paciente", "").strip()
+        data_visita = request.form.get("data_visita", "").strip()
+        status = request.form.get("status", "").strip()
+        observacoes = request.form.get("observacoes", "").strip()
+
+        if not id_paciente or not data_visita:
+            mensagem = "Selecione um paciente e informe a data da visita."
+
+        elif status not in ("agendada", "concluida", "cancelada"):
+            mensagem = "Selecione um status válido."
+
+        else:
+            try:
+                datetime.strptime(data_visita, "%Y-%m-%d")
+            except ValueError:
+                mensagem = "Informe uma data válida."
+
+            else:
+                connection = get_connection()
+
+                try:
+                    paciente = connection.execute(
+                        """
+                        SELECT id_paciente
+                        FROM pacientes
+                        WHERE id_paciente = ? AND ativo = 1
+                        """,
+                        (id_paciente,)
+                    ).fetchone()
+
+                    if not paciente:
+                        mensagem = "Paciente não encontrado."
+
+                    else:
+                        connection.execute(
+                            """
+                            INSERT INTO visitas
+                            (id_paciente, data_visita, status, observacoes)
+                            VALUES (?, ?, ?, ?)
+                            """,
+                            (
+                                id_paciente,
+                                data_visita,
+                                status,
+                                observacoes or None
+                            )
+                        )
+
+                        connection.commit()
+                        mensagem = "Visita registrada com sucesso!"
+
+                finally:
+                    connection.close()
+
+        return redirect(url_for("visitas", mensagem=mensagem))
+
+    pacientes, visitas_registradas, ultima_visita = carregar_dados_visitas()
+
+    return render_template(
+        "visitas.html",
+        pacientes=pacientes,
+        visitas=visitas_registradas,
+        ultima_visita=ultima_visita,
+        mensagem=mensagem
+    )
+
+
+@app.route("/visitas/<int:id_visita>/status", methods=["POST"])
+def atualizar_status_visita(id_visita):
+    novo_status = request.form.get("status", "").strip()
+
+    if novo_status not in ("agendada", "concluida", "cancelada"):
+        return redirect(url_for("visitas", mensagem="Status inválido."))
+
+    connection = get_connection()
+
+    try:
+        resultado = connection.execute(
+            """
+            UPDATE visitas
+            SET status = ?
+            WHERE id_visita = ?
+            """,
+            (novo_status, id_visita)
+        )
+
+        connection.commit()
+
+        if resultado.rowcount == 0:
+            mensagem = "Visita não encontrada."
+        else:
+            mensagem = "Status da visita atualizado com sucesso!"
+
+    finally:
+        connection.close()
+
+    return redirect(url_for("visitas", mensagem=mensagem))
+
 
 
 if __name__ == "__main__":

@@ -27,35 +27,47 @@
                 <p>Organize os agendamentos e acompanhe as visitas realizadas.</p>
             </div>
 
-            <a href="/pacientes" class="secondary-link">
+            <a href="{{ url_for('pacientes') }}" class="secondary-link">
                 Voltar aos pacientes
             </a>
         </div>
+
+        {% if mensagem %}
+            <p role="status">{{ mensagem }}</p>
+        {% endif %}
 
         <section class="content-card">
 
             <h3>Registrar ou agendar visita</h3>
 
-            <form class="visit-form">
+            <form class="visit-form" method="POST" action="{{ url_for('visitas') }}">
 
                 <div class="form-group">
                     <label for="paciente">Paciente *</label>
-                    <select id="paciente" required>
+                    <select id="paciente" name="paciente" required>
                         <option value="">Selecione um paciente</option>
-                        <option value="1">Maria Oliveira</option>
-                        <option value="2">João Santos</option>
-                        <option value="3">Ana Costa</option>
+
+                        {% for paciente in pacientes %}
+                            <option value="{{ paciente.id_paciente }}">
+                                {{ paciente.nome }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="data-visita">Data da visita *</label>
-                    <input type="date" id="data-visita" required>
+                    <input
+                        type="date"
+                        id="data-visita"
+                        name="data_visita"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
                     <label for="status">Status *</label>
-                    <select id="status" required>
+                    <select id="status" name="status" required>
                         <option value="agendada">Agendada</option>
                         <option value="concluida">Concluída</option>
                         <option value="cancelada">Cancelada</option>
@@ -66,6 +78,7 @@
                     <label for="observacoes">Observações</label>
                     <textarea
                         id="observacoes"
+                        name="observacoes"
                         rows="3"
                         placeholder="Registre informações relevantes sobre a visita..."
                     ></textarea>
@@ -76,7 +89,7 @@
                         Limpar
                     </button>
 
-                    <button type="button" class="primary-button">
+                    <button type="submit" class="primary-button">
                         Salvar visita
                     </button>
                 </div>
@@ -94,10 +107,17 @@
             <div class="last-visit">
                 <div>
                     <span class="last-visit-label">Última visita concluída</span>
-                    <strong>10/11/2026</strong>
+
+                    {% if ultima_visita %}
+                        <strong>{{ ultima_visita.data_visita | data_br }}</strong>
+                    {% else %}
+                        <strong>Nenhuma visita concluída</strong>
+                    {% endif %}
                 </div>
 
-                <span class="status status-concluida">Concluída</span>
+                {% if ultima_visita %}
+                    <span class="status status-concluida">Concluída</span>
+                {% endif %}
             </div>
 
             <div class="table-container">
@@ -108,53 +128,59 @@
                             <th>Data</th>
                             <th>Status</th>
                             <th>Observações</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 
                     <tbody>
+                        {% for visita in visitas %}
                         <tr>
-                            <td>Maria Oliveira</td>
-                            <td>10/11/2026</td>
-                            <td>
-                                <span class="status status-concluida">
-                                    Concluída
-                                </span>
-                            </td>
-                            <td>Visita realizada normalmente.</td>
-                        </tr>
+                            <td>{{ visita.nome_paciente }}</td>
 
-                        <tr>
-                            <td>Maria Oliveira</td>
-                            <td>20/11/2026</td>
-                            <td>
-                                <span class="status status-agendada">
-                                    Agendada
-                                </span>
-                            </td>
-                            <td>Acompanhamento domiciliar.</td>
-                        </tr>
+                            <td>{{ visita.data_visita | data_br }}</td>
 
-                        <tr>
-                            <td>João Santos</td>
-                            <td>12/11/2026</td>
                             <td>
-                                <span class="status status-concluida">
-                                    Concluída
-                                </span>
+                                {% if visita.status == "concluida" %}
+                                    <span class="status status-concluida">Concluída</span>
+                                {% elif visita.status == "agendada" %}
+                                    <span class="status status-agendada">Agendada</span>
+                                {% else %}
+                                    <span class="status status-cancelada">Cancelada</span>
+                                {% endif %}
                             </td>
-                            <td>Atualização de informações.</td>
-                        </tr>
 
-                        <tr>
-                            <td>Ana Costa</td>
-                            <td>18/11/2026</td>
+                            <td>{{ visita.observacoes or "-" }}</td>
+
                             <td>
-                                <span class="status status-cancelada">
-                                    Cancelada
-                                </span>
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('atualizar_status_visita', id_visita=visita.id_visita) }}"
+                                >
+                                    <select name="status" aria-label="Alterar status da visita">
+                                        <option value="agendada" {% if visita.status == "agendada" %}selected{% endif %}>
+                                            Agendada
+                                        </option>
+
+                                        <option value="concluida" {% if visita.status == "concluida" %}selected{% endif %}>
+                                            Concluída
+                                        </option>
+
+                                        <option value="cancelada" {% if visita.status == "cancelada" %}selected{% endif %}>
+                                            Cancelada
+                                        </option>
+                                    </select>
+
+                                    <button type="submit" class="edit-button">
+                                        Atualizar
+                                    </button>
+                                </form>
                             </td>
-                            <td>Visita cancelada.</td>
                         </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">Nenhuma visita registrada.</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
