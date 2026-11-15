@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes | Saúde em Dia</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-logo">
+            <span class="logo-icon">+</span>
+            <h1>Saúde em Dia</h1>
+        </div>
+
+        <span class="user-name">Agente de Saúde</span>
+    </header>
+
+    <main class="page-container">
+
+        <div class="page-heading">
+            <div>
+                <h2>Pacientes</h2>
+                <p>Consulte e organize os pacientes da sua microárea.</p>
+            </div>
+
+            <button type="button" class="primary-button">
+                + Novo paciente
+            </button>
+        </div>
+
+        <section class="content-card">
+
+            <h3>Consultar pacientes</h3>
+
+            <div class="search-area">
+                <input
+                    type="search"
+                    placeholder="Digite o nome do paciente..."
+                    aria-label="Pesquisar paciente pelo nome"
+                >
+
+                <button type="button" class="primary-button">
+                    Pesquisar
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data de nascimento</th>
+                            <th>Telefone</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Maria Oliveira</td>
+                            <td>10/05/1970</td>
+                            <td>(24) 99999-0000</td>
+                            <td>Rua das Flores, 100</td>
+                            <td>
+                                <button type="button" class="edit-button">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>João Santos</td>
+                            <td>22/08/1965</td>
+                            <td>(24) 98888-0000</td>
+                            <td>Rua do Sol, 45</td>
+                            <td>
+                                <button type="button" class="edit-button">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>15/03/1982</td>
+                            <td>(24) 97777-0000</td>
+                            <td>Rua das Acácias, 20</td>
+                            <td>
+                                <button type="button" class="edit-button">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <section class="content-card">
+
+            <h3>Cadastrar paciente</h3>
+
+            <form class="patient-form">
+
+                <div class="form-group">
+                    <label for="nome">Nome completo *</label>
+                    <input type="text" id="nome" placeholder="Digite o nome completo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nascimento">Data de nascimento</label>
+                    <input type="date" id="nascimento">
+                </div>
+
+                <div class="form-group">
+                    <label for="endereco">Endereço *</label>
+                    <input type="text" id="endereco" placeholder="Digite o endereço" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="cadastro">Número de cadastro</label>
+                    <input type="text" id="cadastro" placeholder="Número de cadastro">
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="secondary-button">
+                        Limpar
+                    </button>
+
+                    <button type="button" class="primary-button">
+                        Salvar paciente
+                    </button>
+                </div>
+
+            </form>
+
+            <p class="required-note">* Campos obrigatórios</p>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

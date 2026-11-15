@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitas Domiciliares | Saúde em Dia</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-logo">
+            <span class="logo-icon">+</span>
+            <h1>Saúde em Dia</h1>
+        </div>
+
+        <span class="user-name">Agente de Saúde</span>
+    </header>
+
+    <main class="page-container">
+
+        <div class="page-heading">
+            <div>
+                <h2>Visitas domiciliares</h2>
+                <p>Organize os agendamentos e acompanhe as visitas realizadas.</p>
+            </div>
+
+            <a href="/pacientes" class="secondary-link">
+                Voltar aos pacientes
+            </a>
+        </div>
+
+        <section class="content-card">
+
+            <h3>Registrar ou agendar visita</h3>
+
+            <form class="visit-form">
+
+                <div class="form-group">
+                    <label for="paciente">Paciente *</label>
+                    <select id="paciente" required>
+                        <option value="">Selecione um paciente</option>
+                        <option value="1">Maria Oliveira</option>
+                        <option value="2">João Santos</option>
+                        <option value="3">Ana Costa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data-visita">Data da visita *</label>
+                    <input type="date" id="data-visita" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" required>
+                        <option value="agendada">Agendada</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="observacoes">Observações</label>
+                    <textarea
+                        id="observacoes"
+                        rows="3"
+                        placeholder="Registre informações relevantes sobre a visita..."
+                    ></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="secondary-button">
+                        Limpar
+                    </button>
+
+                    <button type="button" class="primary-button">
+                        Salvar visita
+                    </button>
+                </div>
+
+            </form>
+
+            <p class="required-note">* Campos obrigatórios</p>
+
+        </section>
+
+        <section class="content-card">
+
+            <h3>Histórico de visitas</h3>
+
+            <div class="last-visit">
+                <div>
+                    <span class="last-visit-label">Última visita concluída</span>
+                    <strong>10/11/2026</strong>
+                </div>
+
+                <span class="status status-concluida">Concluída</span>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Maria Oliveira</td>
+                            <td>10/11/2026</td>
+                            <td>
+                                <span class="status status-concluida">
+                                    Concluída
+                                </span>
+                            </td>
+                            <td>Visita realizada normalmente.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Maria Oliveira</td>
+                            <td>20/11/2026</td>
+                            <td>
+                                <span class="status status-agendada">
+                                    Agendada
+                                </span>
+                            </td>
+                            <td>Acompanhamento domiciliar.</td>
+                        </tr>
+
+                        <tr>
+                            <td>João Santos</td>
+                            <td>12/11/2026</td>
+                            <td>
+                                <span class="status status-concluida">
+                                    Concluída
+                                </span>
+                            </td>
+                            <td>Atualização de informações.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>18/11/2026</td>
+                            <td>
+                                <span class="status status-cancelada">
+                                    Cancelada
+                                </span>
+                            </td>
+                            <td>Visita cancelada.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
