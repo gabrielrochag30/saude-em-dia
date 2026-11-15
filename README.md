@@ -23,11 +23,11 @@ Desenvolver uma aplicação web simples que permita cadastrar, consultar e edita
 - Flask
 - HTML5
 - CSS3
-- SQLite (previsto para a próxima etapa)
+- SQLite
 
 ## Status do projeto
 
-Em desenvolvimento. Atualmente, o projeto possui a estrutura inicial e as telas de login, pacientes e visitas. As funcionalidades de autenticação e persistência de dados ainda serão implementadas.
+Em desenvolvimento. O projeto possui as telas iniciais de login, pacientes e visitas, além da estrutura do banco de dados SQLite. As funcionalidades de autenticação e operações de cadastro e consulta ainda serão implementadas.
 
 ## Observação
 
