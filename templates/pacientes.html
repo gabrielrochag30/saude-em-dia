@@ -10,14 +10,28 @@
 </head>
 <body>
 
-    <header class="topbar">
-        <div class="topbar-logo">
-            <span class="logo-icon">+</span>
-            <h1>Saúde em Dia</h1>
-        </div>
+<header class="topbar">
+    <div class="topbar-logo">
+        <span class="logo-icon">+</span>
+        <h1>Saúde em Dia</h1>
+    </div>
 
+    <div class="topbar-actions">
         <span class="user-name">Agente de Saúde</span>
-    </header>
+
+        <form method="GET" action="{{ url_for('visitas') }}">
+            <button type="submit" class="secondary-button">
+                Visitas
+            </button>
+        </form>
+
+        <form method="POST" action="{{ url_for('sair') }}">
+            <button type="submit" class="secondary-button">
+                Sair
+            </button>
+        </form>
+    </div>
+</header>
 
     <main class="page-container">
 

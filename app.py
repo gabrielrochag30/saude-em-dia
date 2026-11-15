@@ -1,11 +1,27 @@
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
+from functools import wraps
+from werkzeug.security import check_password_hash
 import sqlite3
+import os
 
 from database import get_connection
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY")
+
+
+# Protege as páginas que exigem autenticação
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if "id_usuario" not in session:
+            return redirect(url_for("inicio"))
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def listar_pacientes(busca=""):
@@ -57,12 +73,44 @@ def data_br(data):
     return datetime.strptime(data, "%Y-%m-%d").strftime("%d/%m/%Y")
 
 
-@app.route("/")
+# Login do sistema
+@app.route("/", methods=["GET", "POST"])
 def inicio():
+    if request.method == "POST":
+        login = request.form.get("usuario", "").strip()
+        senha = request.form.get("senha", "")
+
+        connection = get_connection()
+
+        try:
+            usuario = connection.execute(
+                """
+                SELECT id_usuario, login, senha_hash
+                FROM usuarios
+                WHERE login = ? AND ativo = 1
+                """,
+                (login,)
+            ).fetchone()
+
+        finally:
+            connection.close()
+
+        if usuario and check_password_hash(usuario["senha_hash"], senha):
+            session["id_usuario"] = usuario["id_usuario"]
+            session["login"] = usuario["login"]
+
+            return redirect(url_for("pacientes"))
+
+        return render_template(
+            "login.html",
+            mensagem="Usuário ou senha incorretos."
+        )
+
     return render_template("login.html")
 
 
 @app.route("/pacientes", methods=["GET", "POST"])
+@login_required
 def pacientes():
     if request.method == "POST":
         id_paciente = request.form.get("id_paciente", "").strip()
@@ -175,7 +223,6 @@ def pacientes():
     )
 
 
-
 def carregar_dados_visitas():
     connection = get_connection()
 
@@ -221,6 +268,7 @@ def carregar_dados_visitas():
 
 
 @app.route("/visitas", methods=["GET", "POST"])
+@login_required
 def visitas():
     mensagem = request.args.get("mensagem", "")
 
@@ -293,6 +341,7 @@ def visitas():
 
 
 @app.route("/visitas/<int:id_visita>/status", methods=["POST"])
+@login_required
 def atualizar_status_visita(id_visita):
     novo_status = request.form.get("status", "").strip()
 
@@ -323,6 +372,13 @@ def atualizar_status_visita(id_visita):
 
     return redirect(url_for("visitas", mensagem=mensagem))
 
+
+# Encerramento da sessão
+@app.route("/sair", methods=["POST"])
+@login_required
+def sair():
+    session.clear()
+    return redirect(url_for("inicio"))
 
 
 if __name__ == "__main__":

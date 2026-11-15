@@ -25,7 +25,11 @@
                 Entre com seus dados para acessar o sistema.
             </p>
 
-            <form class="login-form">
+            {% if mensagem %}
+                <p class="mensagem">{{ mensagem }}</p>
+            {% endif %}
+
+            <form class="login-form" method="POST" action="{{ url_for('inicio') }}">
 
                 <div class="form-group">
                     <label for="usuario">Usuário</label>
@@ -51,7 +55,7 @@
                     >
                 </div>
 
-                <button type="button" class="login-button">
+                <button type="submit" class="login-button">
                     Entrar
                 </button>
 

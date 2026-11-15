@@ -16,7 +16,15 @@
             <h1>Saúde em Dia</h1>
         </div>
 
-        <span class="user-name">Agente de Saúde</span>
+        <div class="topbar-actions">
+            <span class="user-name">Agente de Saúde</span>
+
+            <form method="POST" action="{{ url_for('sair') }}">
+                <button type="submit" class="secondary-button">
+                    Sair
+                </button>
+            </form>
+        </div>
     </header>
 
     <main class="page-container">
